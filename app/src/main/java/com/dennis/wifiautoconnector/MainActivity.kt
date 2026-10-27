@@ -75,8 +75,8 @@ class MainActivity : Activity() {
 
         val logo =
             TextView(this).apply {
-                text = "Wi"
-                textSize = 23f
+                text = "D."
+                textSize = 30f
                 setTypeface(typeface, Typeface.BOLD)
                 setTextColor(lightBlue)
                 gravity = Gravity.CENTER
@@ -231,7 +231,7 @@ class MainActivity : Activity() {
 
         val footer =
             makeText(
-                "Wi-Fi AutoConnector  •  Version 1.0",
+                "Made by Dennis  •  Version 1.0",
                 12f,
                 muted,
             )
