@@ -2,6 +2,7 @@ package com.dennis.wifiautoconnector
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
@@ -9,6 +10,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -205,6 +207,31 @@ class MainActivity : Activity() {
 
         addGap(root, 20)
 
+        // Connect to Wi-Fi button
+        val connectButton =
+            Button(this).apply {
+                text = "Connect to Wi-Fi"
+                textSize = 16f
+                isAllCaps = false
+                setTextColor(white)
+                background = rounded(blue, 14)
+                setPadding(dp(12), dp(8), dp(12), dp(8))
+
+                setOnClickListener {
+                    val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
+                    startActivity(intent)
+                }
+            }
+
+        root.addView(
+            connectButton,
+            LinearLayout.LayoutParams(
+                -1,
+                dp(56),
+            ),
+        )
+
+        addGap(root, 12)
         // Manual refresh button
         val checkButton =
             Button(this).apply {
