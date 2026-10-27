@@ -478,33 +478,48 @@ class MainActivity : Activity() {
                 NetworkCapabilities.NET_CAPABILITY_VALIDATED,
             ) == true
 
+        val captivePortalDetected =
+            capabilities?.hasCapability(
+                NetworkCapabilities.NET_CAPABILITY_CAPTIVE_PORTAL,
+            ) == true
+
+        // Update Wi-Fi status
         wifiValue.text =
-            if (wifiConnected) {
-                "Connected"
-            } else {
-                "Not connected"
-            }
+            if (wifiConnected) "Connected" else "Not connected"
 
         wifiValue.setTextColor(
             if (wifiConnected) green else muted,
         )
 
+        // Update internet status
         internetValue.text =
             when {
                 internetAvailable -> "Available"
+                captivePortalDetected -> "Sign-in required"
                 capabilities != null -> "Not verified"
                 else -> "Unavailable"
             }
 
         internetValue.setTextColor(
-            if (internetAvailable) green else muted,
+            when {
+                internetAvailable -> green
+                captivePortalDetected -> lightBlue
+                else -> muted
+            },
         )
 
+        // Update the main dashboard message
         when {
             wifiConnected && internetAvailable -> {
                 overallStatus.text = "You're connected"
                 statusDetail.text =
                     "Wi-Fi and internet are working"
+            }
+
+            wifiConnected && captivePortalDetected -> {
+                overallStatus.text = "Sign-in required"
+                statusDetail.text =
+                    "Captive portal detected. Authentication is needed."
             }
 
             wifiConnected -> {
