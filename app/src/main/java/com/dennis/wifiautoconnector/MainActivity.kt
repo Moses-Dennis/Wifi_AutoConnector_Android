@@ -26,6 +26,7 @@ class MainActivity : Activity() {
     private lateinit var statusDetail: TextView
     private lateinit var wifiValue: TextView
     private lateinit var internetValue: TextView
+    private lateinit var actionButton: Button
     private var networkCallback:
         ConnectivityManager.NetworkCallback? = null
 
@@ -208,7 +209,7 @@ class MainActivity : Activity() {
         addGap(root, 20)
 
         // Connect to Wi-Fi button
-        val connectButton =
+        actionButton =
             Button(this).apply {
                 text = "Connect to Wi-Fi"
                 textSize = 16f
@@ -218,13 +219,12 @@ class MainActivity : Activity() {
                 setPadding(dp(12), dp(8), dp(12), dp(8))
 
                 setOnClickListener {
-                    val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
-                    startActivity(intent)
+                    startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
                 }
             }
 
         root.addView(
-            connectButton,
+            actionButton,
             LinearLayout.LayoutParams(
                 -1,
                 dp(56),
@@ -235,14 +235,24 @@ class MainActivity : Activity() {
         // Manual refresh button
         val checkButton =
             Button(this).apply {
-                text = "↻   Check Connection"
+                text = "Check Connection"
                 textSize = 16f
                 isAllCaps = false
                 setTextColor(white)
                 background = rounded(blue, 14)
                 setPadding(dp(12), dp(8), dp(12), dp(8))
+
                 setOnClickListener {
-                    refreshStatus()
+                    isEnabled = false
+                    text = "Checking..."
+
+                    statusDetail.text = "Refreshing connection status..."
+
+                    postDelayed({
+                        refreshStatus()
+                        text = "Check Connection"
+                        isEnabled = true
+                    }, 700)
                 }
             }
 
@@ -482,6 +492,26 @@ class MainActivity : Activity() {
             capabilities?.hasCapability(
                 NetworkCapabilities.NET_CAPABILITY_CAPTIVE_PORTAL,
             ) == true
+        when {
+            wifiConnected && captivePortalDetected -> {
+                actionButton.text = "Sign in to Wi-Fi"
+
+                actionButton.setOnClickListener {
+                    statusDetail.text =
+                        "Captive portal detected. Portal automation is not implemented yet. Check Android's sign-in notification for now."
+                }
+            }
+
+            else -> {
+                actionButton.text = "Connect to Wi-Fi"
+
+                actionButton.setOnClickListener {
+                    startActivity(
+                        Intent(Settings.ACTION_WIFI_SETTINGS),
+                    )
+                }
+            }
+        }
 
         // Update Wi-Fi status
         wifiValue.text =
